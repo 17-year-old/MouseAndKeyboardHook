@@ -29,9 +29,23 @@ implementation
 
 {$R *.dfm}
 
+type
+  tagKBDLLHOOKSTRUCT = packed record
+    vkCode: DWORD;
+    scanCode: DWORD;
+    flags: DWORD;
+    Time: DWORD;
+    dwExtraInfo: DWORD;
+  end;
+
+  KBDLLHOOKSTRUCT = tagKBDLLHOOKSTRUCT;
+
+  PKBDLLHOOKSTRUCT = ^KBDLLHOOKSTRUCT;
+
 const
   WH_KEYBOARD_LL = 13;
   WH_MOUSE_LL = 14;
+  LLKHF_ALTDOWN = $20;
 
 var
   LastActionTime: Cardinal;
@@ -53,12 +67,35 @@ begin
 end;
 
 function KeyboardHookProc(iCode: Integer; wParam: wParam; lParam: lParam): LRESULT; stdcall;
+var
+  p: PKBDLLHOOKSTRUCT;
 begin
   if iCode >= 0 then
   begin
     if (iCode = HC_ACTION) then
     begin
       LastActionTime := GetTickCount;
+      case wParam of
+        WM_KEYDOWN:
+          begin
+          end;
+        WM_KEYUP:
+          begin
+            p := PKBDLLHOOKSTRUCT(lParam);
+            begin
+              if ((p.vkCode >= Ord('0')) and (p.vkCode <= Ord('9'))) or ((p.vkCode >= Ord('A')) and (p.vkCode <= Ord('Z')))
+                or ((p.vkCode >= Ord('a')) and (p.vkCode <= Ord('z'))) then
+              begin
+              end;
+            end;
+          end;
+        WM_SYSKEYDOWN:
+          begin
+          end;
+        WM_SYSKEYUP:
+          begin
+          end;
+      end;
     end;
   end;
 
